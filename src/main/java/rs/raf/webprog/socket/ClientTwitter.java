@@ -13,17 +13,23 @@ public class ClientTwitter {
     private BufferedReader in;
     private Socket socket;
     private int portNumber;
+    private static int clientId=0;
+    private int id;
 
 
     public ClientTwitter(int portNumber) throws IOException {
+        id=++clientId;
         Socket socket1 = new Socket("localhost",portNumber);
-        BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-        PrintWriter out = new PrintWriter(socket1.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(System.in));
+        out = new PrintWriter(socket1.getOutputStream(), true);
     }
 
+    public int getId(){
+        return id;
+    }
     public void registerUser(String username,String password){
         String command = Constants.REGISTER_COMMAND+Constants.SEP+username+Constants.SEP+password;
-        System.out.println("sent to server:"+command);
+        System.out.println(id+" sent to server:"+command);
         out.println(command);
     }
 
