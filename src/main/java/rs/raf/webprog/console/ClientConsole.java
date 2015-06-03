@@ -11,15 +11,12 @@ import java.util.List;
 
 public class ClientConsole {
 
-//    private static List<Integer> portNumbers;
-//    private static ServerTwitter serverTwitter=null;
-
 
     public void work() throws IOException {
-        ServerTwitter serverTwitter = new ServerTwitter(8080);
+//        ServerTwitter serverTwitter = new ServerTwitter(8080);
 
         ClientTwitter clientTwitter= new ClientTwitter(8080);
-        System.out.println("Welcome to RAF client. Attached to port "+clientTwitter.getSocket().getLocalPort());
+        System.out.println("Welcome to RAF client.");
 
         BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
@@ -39,6 +36,13 @@ public class ClientConsole {
                     String username= console.readLine();
                     System.out.println("Enter password:");
                     String password= console.readLine();
+                    while(!clientTwitter.registerUser(username,password)){
+                        System.out.println("Username already taken. Try again.");
+                        System.out.println("Enter username:");
+                        username= console.readLine();
+                        System.out.println("Enter password:");
+                        password= console.readLine();
+                    }
                     System.out.println("Congratulations. You are registered with RAF Twitter. ");
                     break;
                 }
@@ -51,7 +55,8 @@ public class ClientConsole {
                             "Please enter one of the following commands:\n" +
                             "[1] Search for user by username.\n" +
                             "[2] Follow user by username.\n" +
-                            "[3] List all users.\n");
+                            "[3] List all users.\n" +
+                            "[4] Tweet something.\n");
                     int c2 = Integer.parseInt(command);
                     switch(c2){
                         case 1:

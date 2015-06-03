@@ -16,13 +16,14 @@ public class ServerTwitterThread extends Thread {
         try{
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String inputLine, outputLine="start";
-            out.println(outputLine);
+            String inputLine, outputLine;
+
             while ((inputLine = in.readLine()) != null) {
-                outputLine = inputLine;
-                System.out.println("inputLine:"+inputLine);
-                out.println("outputLine:"+outputLine);
-                if (outputLine.equals("Bye"))
+                System.out.println("server inputLine:"+inputLine);
+
+                outputLine = "OK "+inputLine;
+                out.println("server sending back:"+outputLine);
+                if (inputLine.equals("Bye"))
                     break;
             }
             socket.close();
@@ -30,5 +31,21 @@ public class ServerTwitterThread extends Thread {
             e.printStackTrace();
         }
     }
+
+    public boolean parseAndExecuteCommand(String fullCommand){
+        String[] commandParts = fullCommand.split("_");
+        if (commandParts[0].equals(Constants.REGISTER_COMMAND)){
+//            try{
+//                registerUser(commandParts[1],commandParts[2]);
+//            }
+            return false ;
+        }
+        return false;
+    }
+
+//    public boolean registerUser(String username,String password){
+//
+//
+//    }
 
 }

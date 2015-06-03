@@ -7,62 +7,31 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Date;
 
-/**
- * Created by srdjanp@ballab.com on 2/6/2015.
- */
+
 @Entity
 @Table(name = "user")
 public class User implements java.io.Serializable  {
     private static final long serialVersionUID = -4863040932014032728L;
 
     @Id
-    private String id;
-//    @Range(min = 0, max = 1)
+    @Column(name = "username")
+    private String username;
+
     @Column
-    private Integer purchaseRequestCount ;
-
-
-    @Column//(name = "firstPurchaseRequestDate")
-    private Date firstPurchaseRequestDate;
-
+    private String password;
 
 
     public User() { }
 
-    public User(String id, Integer purchaseRequestCount, Date firstPurchaseRequestDate) {
+    public User(String username, String password) {
         super();
-        this.id = id;
-        this.purchaseRequestCount = purchaseRequestCount;
-        this.firstPurchaseRequestDate = firstPurchaseRequestDate;
+        this.username = username;
+        this.password = password;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Integer getPurchaseRequestCount() {
-        return purchaseRequestCount;
-    }
-
-    public void setPurchaseRequestCount(Integer purchaseRequestCount) {
-        this.purchaseRequestCount = purchaseRequestCount;
-    }
-
-    public Date getFirstPurchaseRequestDate() {
-        return firstPurchaseRequestDate;
-    }
-
-    public void setFirstPurchaseRequestDate(Date firstPurchaseRequestDate) {
-        this.firstPurchaseRequestDate = firstPurchaseRequestDate;
-    }
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", purchaseRequestCount=" + purchaseRequestCount +
-                ", firstPurchaseRequestDate="+firstPurchaseRequestDate+"]";
+        return "User [username=" + username + ", password=" + password+"]";
     }
 }

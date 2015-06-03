@@ -19,34 +19,27 @@ public class ClientTwitter {
 
     public ClientTwitter(int portNumber) throws IOException {
         id=++clientId;
-        Socket socket1 = new Socket("localhost",portNumber);
-        in = new BufferedReader(new InputStreamReader(System.in));
-        out = new PrintWriter(socket1.getOutputStream(), true);
+        Socket socket = new Socket("localhost",portNumber);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));//new InputStreamReader(System.in)
+        out = new PrintWriter(socket.getOutputStream(), true);
     }
 
     public int getId(){
         return id;
     }
-    public void registerUser(String username,String password){
+    public boolean registerUser(String username,String password) throws IOException {
         String command = Constants.REGISTER_COMMAND+Constants.SEP+username+Constants.SEP+password;
         System.out.println(id+" sent to server:"+command);
         out.println(command);
+        String serverAnswer = in.readLine();
+//        System.out.println("server returned: "+serverAnswer);
+        return serverAnswer.equals("OK")?true:false;
     }
 
-    public Socket getSocket() {
-        return socket;
-    }
 
     public static void main(String[] args) throws IOException {
-        Socket socket1 = new Socket("localhost",8080);
-        BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-        PrintWriter out = new PrintWriter(socket1.getOutputStream(), true);
-        while(true){
-            System.out.println("enter");
-            String read = console.readLine();
-            System.out.println(read);
-            out.println(read);
+        ClientTwitter clientTwitter = new ClientTwitter(8080);
+        clientTwitter.registerUser("user1","pass");
 
-        }
     }
 }
