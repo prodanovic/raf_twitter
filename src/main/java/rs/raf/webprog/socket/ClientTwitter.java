@@ -1,6 +1,8 @@
 package rs.raf.webprog.socket;
 
 
+import rs.raf.webprog.mysql.domain.User;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +17,7 @@ public class ClientTwitter {
     private int portNumber;
     private static int clientId=0;
     private int id;
+    private User loggedInUser;
 
 
     public ClientTwitter(int portNumber) throws IOException {
