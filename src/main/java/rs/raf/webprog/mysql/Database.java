@@ -53,11 +53,12 @@ public class Database {
 
 
     public void addUser(String username,String password) throws SQLException {
+        if(!userExistInDB(username))
         statement.execute("INSERT INTO user VALUES ('" + username + "','" + password + "')");
     }
 
     public void followUser(String follower,String followed) throws SQLException {
-        resultSet = statement.executeQuery("select * from followers WHERE follower='"+follower+"' AND follower='" + follower + "'");
+        resultSet = statement.executeQuery("select * from followers WHERE follower='"+follower+"' AND followed='" + followed + "'");
         if(!resultSet.next() && userExistInDB(follower) && userExistInDB(followed))
             statement.execute("INSERT INTO followers VALUES ('" + followed + "','" + follower + "')");
     }
@@ -88,22 +89,36 @@ public class Database {
         return result;
     }
 
+    public HashMap<String,List<String>> getFriendsTweetsByFilter(String user, HashMap<String,String> filters) throws SQLException {
+        HashMap<String,List<String>> result = new HashMap<String,List<String>>();
+        List<String> followed =  getFollowedFriends(user);
+        for(String friend:followed){
+            result.put(friend, getUserTweetsByFilter(user, filters));
+        }
+        return result;
+    }
+
+
 
     public static void main(String[] args) throws SQLException, ParseException {
         Database database = new Database();
 //        System.out.println("userExistInDB JA: "+ database.userExistInDB("JA2"));
-//        database.addUser("JA2","pass");
-//        database.addUser("JA","pass");
+        database.addUser("JA5","pass");
+        database.addUser("JA","pass");
 //        System.out.println("userExistInDB JA2: "+ database.userExistInDB("JA2"));
 //        System.out.println("all users: "+ database.getAllUsersConcatenated());
 //        database.followUser("JA2","JA");
-//        database.tweetSomething("JA2","tweeterer3 333 ");
+        database.tweetSomething("JA5","333 ");
 
         database.followUser("JA2","JA");
         database.followUser("JA2","JA5");
 //        database.unFollowUser("JA2", "JA");
-        List<String> list = database.getFollowedFriends("JA2");
-        for(String friend:list)System.out.print(friend+", ");
+//        List<String> list = database.getFollowedFriends("JA2");
+//        for(String friend:list)System.out.print(friend+", ");
+        HashMap<String,String> filters = new HashMap<>();
+        List<String> list = database.getUserTweetsByFilter("JA5",filters);
+        for(String tweet:list)System.out.println(tweet);
+
 
     }
 }
