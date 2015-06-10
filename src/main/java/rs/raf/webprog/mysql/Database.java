@@ -2,13 +2,10 @@ package rs.raf.webprog.mysql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Database {
@@ -78,25 +75,31 @@ public class Database {
         statement.execute("INSERT INTO tweet VALUES ('" + user + "','" + tweet + "',NOW())");
     }
 
-    public List<String> getUserTweetsByFilter(String user, HashMap<String,String> filters) throws SQLException {
-        List<String> result = new ArrayList<>();
-        StringBuilder queryString = new StringBuilder("select * from tweet where user='"+user+"' ");
-        while(filters.entrySet().iterator().hasNext()){
-            Map.Entry<String,String> entry = filters.entrySet().iterator().next();
-            queryString.append("AND ").append(entry.getKey()).append("='").append(entry.getValue()).append("'");
-        }
+    public List<String> getUserTweets(String user, String startDate, String endDate, Integer count) throws SQLException {
+        List<String> tweets = new ArrayList<>();
+        StringBuilder queryString = new StringBuilder("select * from tweet where username='"+user+"' ");
+        if(startDate!=null)queryString.append(" AND createdAt>=").append("'"+startDate+"'");
+        if(endDate!=null)queryString.append(" AND createdAt<=").append("'"+endDate+"'");
+        if(count>0)queryString.append(" LIMIT ").append(count);
+
         resultSet = statement.executeQuery(queryString.toString());
-        return result;
+        while(resultSet.next())tweets.add(resultSet.getString(1)+"\t\t"+resultSet.getString(2)+"\t\t"+resultSet.getString(3));
+        return tweets;
     }
 
-    public HashMap<String,List<String>> getFriendsTweetsByFilter(String user, HashMap<String,String> filters) throws SQLException {
-        HashMap<String,List<String>> result = new HashMap<String,List<String>>();
-        List<String> followed =  getFollowedFriends(user);
-        for(String friend:followed){
-            result.put(friend, getUserTweetsByFilter(user, filters));
-        }
-        return result;
+    public List<String> getFollowedTweets(String user, String startDate, String endDate, Integer count) throws SQLException {
+        List<String> tweets = new ArrayList<>();
+        StringBuilder queryString = new StringBuilder("SELECT t.username, t.tweet, t.createdAt FROM tweet t, followers f " +
+                " WHERE f.follower='"+user+"' AND f.followed= t.username");
+        if(startDate!=null)queryString.append(" AND createdAt>=").append("'"+startDate+"'");
+        if(endDate!=null)queryString.append(" AND createdAt<=").append("'"+endDate+"'");
+        if(count>0)queryString.append(" LIMIT ").append(count);
+
+        resultSet = statement.executeQuery(queryString.toString());
+        while(resultSet.next())tweets.add(resultSet.getString(1)+"\t\t"+resultSet.getString(2)+"\t\t"+resultSet.getString(3));
+        return tweets;
     }
+
 
 
 
@@ -108,16 +111,19 @@ public class Database {
 //        System.out.println("userExistInDB JA2: "+ database.userExistInDB("JA2"));
 //        System.out.println("all users: "+ database.getAllUsersConcatenated());
 //        database.followUser("JA2","JA");
-        database.tweetSomething("JA5","333 ");
+//        database.tweetSomething("JA5","333 ");
 
         database.followUser("JA2","JA");
         database.followUser("JA2","JA5");
 //        database.unFollowUser("JA2", "JA");
 //        List<String> list = database.getFollowedFriends("JA2");
 //        for(String friend:list)System.out.print(friend+", ");
-        HashMap<String,String> filters = new HashMap<>();
-        List<String> list = database.getUserTweetsByFilter("JA5",filters);
-        for(String tweet:list)System.out.println(tweet);
+
+
+//        List<String> list = database.getUserTweets("JA5", "2015-06-06 15:58:52", "2015-06-09 00:58:07", 4);
+//        for(String tweet:list)System.out.println(tweet);
+        List<String> list2 = database.getFollowedTweets("JA2", "2015-06-08","2015-06-09 00:58:07",2);
+        for(String tweet:list2)System.out.println(tweet);
 
 
     }
