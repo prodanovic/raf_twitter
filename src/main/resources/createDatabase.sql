@@ -7,12 +7,11 @@ CREATE TABLE IF NOT EXISTS  `user` (
   PRIMARY KEY (`username`)
 ) ENGINE=INNODB DEFAULT CHARSET=latin1 ;
 
-CREATE TABLE IF NOT EXISTS  `tweet` (
-  `id` varchar(100) NOT NULL,
+CREATE TABLE `tweet` (
   `username` varchar(100) NOT NULL,
-  `createdAt` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1  ;
+  `tweet` varchar(100) NOT NULL,
+  `createdAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE IF NOT EXISTS  `followers` (

@@ -9,7 +9,7 @@ import java.text.ParseException;
 import java.util.*;
 
 public class Database {
-    private Connection connect = null;
+    private Connection connection = null;
     private Statement statement = null;
     private ResultSet resultSet = null;
 
@@ -17,9 +17,9 @@ public class Database {
     public Database() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connect = DriverManager.getConnection("jdbc:mysql://localhost/twitter?user=root&password=root");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/twitter?user=root&password=");
            // Statements allow to issue SQL queries to the database
-            statement = connect.createStatement();
+            statement = connection.createStatement();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -87,10 +87,11 @@ public class Database {
         return tweets;
     }
 
-    public List<String> getFollowedTweets(String user, String startDate, String endDate, Integer count) throws SQLException {
+    public List<String> getFollowedTweets(String user, String filterUser, String startDate, String endDate, Integer count) throws SQLException {
         List<String> tweets = new ArrayList<>();
         StringBuilder queryString = new StringBuilder("SELECT t.username, t.tweet, t.createdAt FROM tweet t, followers f " +
                 " WHERE f.follower='"+user+"' AND f.followed= t.username");
+        if(filterUser!=null)queryString.append(" AND t.username=").append("'"+filterUser+"'");
         if(startDate!=null)queryString.append(" AND createdAt>=").append("'"+startDate+"'");
         if(endDate!=null)queryString.append(" AND createdAt<=").append("'"+endDate+"'");
         if(count>0)queryString.append(" LIMIT ").append(count);
@@ -108,10 +109,16 @@ public class Database {
 //        System.out.println("userExistInDB JA: "+ database.userExistInDB("JA2"));
         database.addUser("JA5","pass");
         database.addUser("JA","pass");
+        database.addUser("JA2","pass");
 //        System.out.println("userExistInDB JA2: "+ database.userExistInDB("JA2"));
 //        System.out.println("all users: "+ database.getAllUsersConcatenated());
-//        database.followUser("JA2","JA");
-//        database.tweetSomething("JA5","333 ");
+
+//        database.tweetSomething("JA","333  1 ");
+//        database.tweetSomething("JA2","333 2 ");
+//        database.tweetSomething("JA5","333 3");
+//        database.tweetSomething("JA5","333 4");
+
+
 
         database.followUser("JA2","JA");
         database.followUser("JA2","JA5");
@@ -122,7 +129,7 @@ public class Database {
 
 //        List<String> list = database.getUserTweets("JA5", "2015-06-06 15:58:52", "2015-06-09 00:58:07", 4);
 //        for(String tweet:list)System.out.println(tweet);
-        List<String> list2 = database.getFollowedTweets("JA2", "2015-06-08","2015-06-09 00:58:07",2);
+        List<String> list2 = database.getFollowedTweets("JA2", "JA", "2015-06-11 19:02:28.0",null,0);
         for(String tweet:list2)System.out.println(tweet);
 
 
