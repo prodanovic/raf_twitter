@@ -4,6 +4,7 @@ import rs.raf.webprog.mysql.Database;
 import java.net.*;
 import java.io.*;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 public class ServerTwitterThread extends Thread {
 
@@ -18,45 +19,113 @@ public class ServerTwitterThread extends Thread {
 
     public void run() {
         try{
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            ObjectOutputStream outToClient = new ObjectOutputStream(socket.getOutputStream());
+            BufferedReader inFromClient  = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String inputLine, outputLine;
 
-            while ((inputLine = in.readLine()) != null) {
+            while ((inputLine = inFromClient.readLine()) != null) {
                 System.out.println("server received:"+inputLine);
+                String[] commandParts = inputLine.split("_");
+                String command = commandParts[0];
 
-                outputLine = parseAndExecuteCommand(inputLine)?"OK":"NO";
-                System.out.println("server returning:"+outputLine);
-                out.println(outputLine);
-                if (inputLine.equals("Bye"))
-                    break;
+                switch (command){
+                    case Constants.USER_EXISTS_COMMAND:{
+                        Boolean success = userExistInDB(commandParts[1]);
+                        outToClient.writeObject(success);
+                        break;
+                    }
+                    case Constants.REGISTER_COMMAND:{
+                        outToClient.writeObject(registerUser(commandParts[1],commandParts[2]));
+                        break;
+                    }
+                    case Constants.LOGIN_COMMAND:{
+                        outToClient.writeObject(login(commandParts[1], commandParts[2]));
+                        break;
+                    }
+                    case Constants.LOGOUT_COMMAND:{
+                        outToClient.writeObject(logout(commandParts[1]));
+                        break;
+                    }
+                    case Constants.GET_ALL_USERS_COMMAND:{
+                        outToClient.writeObject(getAllUsers());
+                        break;
+                    }
+                    case Constants.GET_USER_COMMAND:{
+                        outToClient.writeObject(getUserDetails(commandParts[1]));
+                        break;
+                    }
+                    case Constants.FOLLOW_USER_COMMAND:{
+                        outToClient.writeObject(followUser(commandParts[1],commandParts[2]));
+                        break;
+                    }
+                    case Constants.UNFOLLOW_USER_COMMAND:{
+                        outToClient.writeObject(unFollowUser(commandParts[1], commandParts[2]));
+                        break;
+                    }
+                    case Constants.TWEET_COMMAND:{
+                        outToClient.writeObject(tweet(commandParts[1], commandParts[2]));
+                        break;
+                    }
+                    case Constants.GET_FOLLOWED_TWEETS_COMMAND:{
+                        outToClient.writeObject(tweet(commandParts[1], commandParts[2]));
+                        break;
+                    }
+
+                }
+//                if (commandParts[0].equals(Constants.USER_EXISTS_COMMAND)){
+//
+//                    return userExistInDB(commandParts[1]);
+//                }
+//                outputLine = parseAndExecuteCommand(inputLine)?"OK":"NO";
+//                System.out.println("server returning:"+outputLine);
+//                out.println(outputLine);
+//                if (inputLine.equals("Bye"))
+//                    break;
             }
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
-    public boolean parseAndExecuteCommand(String fullCommand) throws SQLException {
-        String[] commandParts = fullCommand.split("_");
-
-        if (commandParts[0].equals(Constants.USER_EXISTS_COMMAND)){
-//            try{
-//                registerUser(commandParts[1],commandParts[2]);
-//            }
-            return userExistInDB(commandParts[1]);
-        }
-
-        return false;
-    }
     public boolean userExistInDB(String username) throws SQLException {
         return database.userExistInDB(username);
     }
-    public boolean registerUser(String username,String password){
-
-        return false;
+    public boolean registerUser(String username,String password) {
+        try {
+            database.addUser(username,password);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean login(String username,String password) throws SQLException {
+          return  database.login(username,password);
+    }
+    public boolean logout(String username) throws SQLException {
+        return  database.logout(username);
+    }
+    public String getAllUsers() throws SQLException {
+        return  database.getAllUsersConcatenated();
+    }
+    public String getUserDetails(String username) throws SQLException {
+        return  database.getUserDetails(username);
+    }
+    public boolean followUser(String follower, String followed) throws SQLException {
+        return database.followUser(follower, followed);
+    }
+    public boolean unFollowUser(String follower, String followed) throws SQLException {
+        return database.unFollowUser(follower, followed);
     }
 
+    public boolean tweet(String username, String tweet) throws SQLException, ParseException {
+        database.tweetSomething(username, tweet);
+        return true;
+    }
 }

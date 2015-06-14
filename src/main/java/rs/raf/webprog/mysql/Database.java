@@ -17,7 +17,7 @@ public class Database {
     public Database() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/twitter?user=root&password=");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/twitter?user=root&password=root");
            // Statements allow to issue SQL queries to the database
             statement = connection.createStatement();
         } catch (ClassNotFoundException e) {
@@ -47,21 +47,62 @@ public class Database {
         for(String l:list)result.append(", "+l);
         return "("+result.toString().replaceFirst(", ","")+")";
     }
+    public String getUserDetails(String username) throws SQLException {
+        resultSet = statement.executeQuery("select * from user where username='"+username+"'");
+        if(resultSet.next()){
+            return "User :"+resultSet.getString(1);
+        }
+        else return "Searched user does not exist.";
+    }
 
 
     public void addUser(String username,String password) throws SQLException {
         if(!userExistInDB(username))
-        statement.execute("INSERT INTO user VALUES ('" + username + "','" + password + "')");
+        statement.execute("INSERT INTO user VALUES ('" + username + "','" + password + "','0')");
     }
 
-    public void followUser(String follower,String followed) throws SQLException {
+    public boolean isUserLoggedIn(String username) throws SQLException {
+        if(userExistInDB(username)){
+            resultSet = statement.executeQuery("select * from user where username='"+username+"'");
+            resultSet.next();
+            return resultSet.getBoolean(3);
+        }
+        else return false;
+    }
+
+    public boolean login(String username,String password) throws SQLException {
+        resultSet = statement.executeQuery("select * from user where username='"+username+"' AND password='"+password+"'");
+        if(resultSet.next()){
+            statement.executeUpdate("update user SET loggedIn='1' where username='"+username+"'");
+            return true;
+        }
+        else return false;
+    }
+    public boolean logout(String username) throws SQLException {
+        resultSet = statement.executeQuery("select * from user where username='"+username+"'");
+        if(resultSet.next()){
+            statement.executeUpdate("update user SET loggedIn='0' where username='"+username+"'");
+            return true;
+        }
+        else return false;
+    }
+
+    public boolean followUser(String follower,String followed) throws SQLException {
         resultSet = statement.executeQuery("select * from followers WHERE follower='"+follower+"' AND followed='" + followed + "'");
-        if(!resultSet.next() && userExistInDB(follower) && userExistInDB(followed))
+        if(!resultSet.next() && userExistInDB(follower) && userExistInDB(followed)){
             statement.execute("INSERT INTO followers VALUES ('" + followed + "','" + follower + "')");
+            return true;
+        }
+        else return false;
+
     }
 
-    public void unFollowUser(String follower,String followed) throws SQLException {
-        statement.execute("DELETE FROM followers WHERE followed='" + followed + "' AND follower='" + follower + "'");
+    public boolean unFollowUser(String follower,String followed) throws SQLException {
+        if(userExistInDB(follower) && userExistInDB(followed)){
+            statement.execute("DELETE FROM followers WHERE followed='" + followed + "' AND follower='" + follower + "'");
+            return true;
+        }
+        else return false;
     }
     public List<String> getFollowedFriends(String user) throws SQLException {
         List<String> result = new ArrayList<>();
@@ -107,7 +148,12 @@ public class Database {
     public static void main(String[] args) throws SQLException, ParseException {
         Database database = new Database();
 //        System.out.println("userExistInDB JA: "+ database.userExistInDB("JA2"));
-        database.addUser("JA5","pass");
+        database.addUser("JA7","pass");
+        System.out.println("JA7 logged: "+ database.isUserLoggedIn("JA7"));
+        System.out.println("wrong login: "+ database.login("JA7","wpass"));
+        System.out.println("login: "+ database.login("JA7","pass"));
+        System.out.println("JA7 logged: "+ database.isUserLoggedIn("JA7"));
+
         database.addUser("JA","pass");
         database.addUser("JA2","pass");
 //        System.out.println("userExistInDB JA2: "+ database.userExistInDB("JA2"));
@@ -129,7 +175,7 @@ public class Database {
 
 //        List<String> list = database.getUserTweets("JA5", "2015-06-06 15:58:52", "2015-06-09 00:58:07", 4);
 //        for(String tweet:list)System.out.println(tweet);
-        List<String> list2 = database.getFollowedTweets("JA2", "JA", "2015-06-11 19:02:28.0",null,0);
+        List<String> list2 = database.getFollowedTweets("JA2", "JA", "2015-06-11 19:02:28.0", null, 0);
         for(String tweet:list2)System.out.println(tweet);
 
 

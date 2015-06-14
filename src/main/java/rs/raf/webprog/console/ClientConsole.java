@@ -14,7 +14,7 @@ import java.util.List;
 public class ClientConsole {
 
 
-    public void work() throws IOException, SQLException {
+    public void work() throws IOException, SQLException, ClassNotFoundException {
 //        ServerTwitter serverTwitter = new ServerTwitter(8080);
 
         ClientTwitter clientTwitter= new ClientTwitter(8080);
@@ -43,13 +43,8 @@ public class ClientConsole {
                     }
                     System.out.println("Enter password:");
                     String password= console.readLine();
-                    while(!clientTwitter.registerUser(username,password)){
-
-                        username= console.readLine();
-                        System.out.println("Enter password:");
-                        password= console.readLine();
-                    }
-                    System.out.println("Congratulations. You are registered with RAF Twitter. ");
+                    if(clientTwitter.registerUser(username,password))
+                        System.out.println("Congratulations. You are registered with RAF Twitter. ");
                     break;
                 }
                 case 2: {
@@ -57,26 +52,78 @@ public class ClientConsole {
                     String username= console.readLine();
                     System.out.println("Enter password:");
                     String password= console.readLine();
-                    System.out.println("You are logged in RAF Twitter./n " +
-                            "Please enter one of the following commands:\n" +
-                            "[1] Search for user by username.\n" +
-                            "[2] Follow user by username.\n" +
-                            "[3] List all users.\n" +
-                            "[4] Tweet something.\n");
-                    int c2 = Integer.parseInt(command);
-                    switch(c2){
-                        case 1:
+                    while(!clientTwitter.login(username,password)){
+                        System.out.println("Wrong username and/or password. Please try again. " );
+                        System.out.println("Enter username:");
+                        username= console.readLine();
+                        System.out.println("Enter password:");
+                        password= console.readLine();
+                    }
+                    boolean loggedIn=true;
+                    while(loggedIn){
+                        System.out.println("Hi " +username+".\n"+
+                                "Please enter one of the following commands:\n" +
+                                "[1] List all users in the system.\n" +
+                                "[2] Search for user by username.\n" +
+                                "[3] Follow user.\n" +
+                                "[4] Un-follow user.\n" +
+                                "[5] Tweet something.\n"+
+                                "[6] Search user tweets.\n"+
+                                "[7] Logout." );
+                        command = console.readLine();
+                        int c2 = Integer.parseInt(command);
+                        switch(c2){
+                            case 1:{
+                                System.out.println("All registered users: "+clientTwitter.getAllUsers());
+                                break;
+                            }
+                            case 2:{
+                                System.out.print("Enter username: ");
+                                String searchedUser = console.readLine();
+                                System.out.println(clientTwitter.getUserByUsername(searchedUser));
+                                break;
+                            }
+                            case 3:{
+                                System.out.print("Which user would you like to follow? ");
+                                String followUser = console.readLine();
+                                if(clientTwitter.followUser(username,followUser))
+                                    System.out.println("You are now following "+ followUser);
+                                else System.out.println("User "+ followUser+" doesn't exist.");
+                                break;
+                            }
+                            case 4:{
+                                System.out.print("Which user would you like to un-follow? ");
+                                String followUser = console.readLine();
+                                if(clientTwitter.unFollowUser(username,followUser))
+                                    System.out.println("You are no longer following "+ followUser);
+                                else System.out.println("User "+ followUser+" doesn't exist.");
+                                break;
+                            }
+                            case 5:{
+                                System.out.println("Gukni nesto golube. ");
+                                String tweet = console.readLine();
+                                System.out.println(clientTwitter.tweet(username,tweet));
+                                break;
+                            }
+                            case 7:{
+                                clientTwitter.logout(username);
+                                loggedIn=false;
+                                break;
+                            }
+                        }
+
                     }
                     break;
                 }
                 case 3: {
+
                     System.exit(0);
                 }
             }
         }
     }
 
-    public static void main (String args[]) throws IOException, SQLException {
+    public static void main (String args[]) throws IOException, SQLException, ClassNotFoundException {
         ClientConsole clientConsole = new ClientConsole();
         clientConsole.work();
     }

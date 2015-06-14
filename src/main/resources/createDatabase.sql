@@ -4,6 +4,7 @@ USE twitter;
 CREATE TABLE IF NOT EXISTS  `user` (
   `username` VARCHAR(100) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
+  `loggedIn` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`username`)
 ) ENGINE=INNODB DEFAULT CHARSET=latin1 ;
 
