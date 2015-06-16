@@ -59,7 +59,7 @@ public class ClientTwitter {
         return (Boolean)inFromServer.readObject();
     }
     public String getAllUsers() throws IOException, ClassNotFoundException {
-        String command = Constants.GET_ALL_USERS_COMMAND;
+        String command = Constants.GET_ALL_USERS_COMMAND+Constants.SEP;
         outToServer.println(command);
         return (String)inFromServer.readObject();
     }
@@ -69,17 +69,17 @@ public class ClientTwitter {
         return (String)inFromServer.readObject();
     }
     public boolean followUser(String follower,String followed) throws IOException, ClassNotFoundException {
-        String command = Constants.FOLLOW_USER_COMMAND+Constants.SEP+follower+Constants.SEP+follower;
+        String command = Constants.FOLLOW_USER_COMMAND+Constants.SEP+follower+Constants.SEP+followed;
         outToServer.println(command);
         return (Boolean)inFromServer.readObject();
     }
     public boolean unFollowUser(String follower,String followed) throws IOException, ClassNotFoundException {
-        String command = Constants.UNFOLLOW_USER_COMMAND+Constants.SEP+follower+Constants.SEP+follower;
+        String command = Constants.UNFOLLOW_USER_COMMAND+Constants.SEP+follower+Constants.SEP+followed;
         outToServer.println(command);
         return (Boolean)inFromServer.readObject();
     }
     public boolean tweet(String username,String tweet) throws IOException, ClassNotFoundException {
-        String command = Constants.UNFOLLOW_USER_COMMAND+Constants.SEP+username+Constants.SEP+tweet;
+        String command = Constants.TWEET_COMMAND+Constants.SEP+username+Constants.SEP+tweet;
         outToServer.println(command);
         return (Boolean)inFromServer.readObject();
     }

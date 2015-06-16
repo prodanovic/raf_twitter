@@ -102,7 +102,13 @@ public class ClientConsole {
                             case 5:{
                                 System.out.println("Gukni nesto golube. ");
                                 String tweet = console.readLine();
-                                System.out.println(clientTwitter.tweet(username,tweet));
+                                clientTwitter.tweet(username,tweet);
+                                break;
+                            }
+                            case 6:{
+                                System.out.println("Gukni nesto golube. ");
+                                String tweet = console.readLine();
+                                clientTwitter.tweet(username,tweet);
                                 break;
                             }
                             case 7:{
@@ -111,8 +117,9 @@ public class ClientConsole {
                                 break;
                             }
                         }
-
+                        System.out.println("------------------");
                     }
+
                     break;
                 }
                 case 3: {
