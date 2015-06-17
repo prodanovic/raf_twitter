@@ -17,7 +17,7 @@ public class ClientConsole {
     public void work() throws IOException, SQLException, ClassNotFoundException {
 //        ServerTwitter serverTwitter = new ServerTwitter(8080);
 
-        ClientTwitter clientTwitter= new ClientTwitter(8080);
+        ClientTwitter clientTwitter= new ClientTwitter(6666);
         System.out.println("Welcome to RAF client.");
 
         BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
@@ -111,12 +111,15 @@ public class ClientConsole {
                                 System.out.println("Which friends's tweets would you like to see?(leave blank for all)");
                                 String filterUser = console.readLine();
                                 if(filterUser.isEmpty())filterUser="*";
-                                System.out.println("From how long back, in format yyyy-MM-dd HH:mm:ss?(leave blank for all)");
+                                System.out.println("From how long back, in format yyyy-MM-dd HH:mm:ss?(leave blank for since forever)");
                                 String startDate = console.readLine();
                                 if(startDate.isEmpty())startDate="*";
+                                System.out.println("Until when, in format yyyy-MM-dd HH:mm:ss?(leave blank for till now)");
+                                String endDate = console.readLine();
+                                if(endDate.isEmpty())endDate="*";
                                 System.out.println("How many tweets?(0 for all)");
                                 Integer count = Integer.parseInt(console.readLine());
-                                String tweetString= clientTwitter.getFollowedTweets(username, filterUser, startDate, "*", count);
+                                String tweetString= clientTwitter.getFollowedTweets(username, filterUser, startDate, endDate, count);
                                 if(tweetString.isEmpty())
                                     System.err.println("Sorry, no tweets. ");
                                 else {

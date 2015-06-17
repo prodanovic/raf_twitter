@@ -33,7 +33,7 @@ public class ServerTwitter {
     }
 
     public static void main(String[] args) throws IOException {
-        ServerTwitter serverTwitter = new ServerTwitter(8080);
+        ServerTwitter serverTwitter = new ServerTwitter(6666);
         serverTwitter.work();
 
 

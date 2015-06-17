@@ -1,7 +1,6 @@
 package rs.raf.webprog.socket;
 
 
-import rs.raf.webprog.mysql.domain.User;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,7 +13,6 @@ public class ClientTwitter {
     private int portNumber;
     private static int clientId=0;
     private int id;
-    private User loggedInUser;
 
 
 
