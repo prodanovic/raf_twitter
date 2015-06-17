@@ -120,7 +120,7 @@ public class ClientConsole {
                                 if(tweetString.isEmpty())
                                     System.err.println("Sorry, no tweets. ");
                                 else {
-                                    System.err.println("User\tTweet\tWhen");
+                                    System.out.println("User\tTweet\tWhen");
                                     System.out.print(tweetString);
                                 }
                                 break;
