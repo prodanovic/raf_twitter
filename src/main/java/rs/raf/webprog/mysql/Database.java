@@ -17,7 +17,7 @@ public class Database {
     public Database() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/twitter?user=root&password=root");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost/twitter?user=root&password=");
            // Statements allow to issue SQL queries to the database
             statement = connection.createStatement();
         } catch (ClassNotFoundException e) {
@@ -40,9 +40,12 @@ public class Database {
         }
         return result;
     }
+
     public String getAllUsersConcatenated() throws SQLException {
-        resultSet = statement.executeQuery("select * from user;");
-        ArrayList<String> list = getAllUsers();
+        return getListAsString(getAllUsers());
+    }
+
+    private String getListAsString(List<String> list) throws SQLException {
         StringBuilder result = new StringBuilder();
         for(String l:list)result.append(", "+l);
         return "("+result.toString().replaceFirst(", ","")+")";
@@ -96,7 +99,6 @@ public class Database {
         else return false;
 
     }
-
     public boolean unFollowUser(String follower,String followed) throws SQLException {
         if(userExistInDB(follower) && userExistInDB(followed)){
             statement.execute("DELETE FROM followers WHERE followed='" + followed + "' AND follower='" + follower + "'");
@@ -104,14 +106,18 @@ public class Database {
         }
         else return false;
     }
-    public List<String> getFollowedFriends(String user) throws SQLException {
+    public List<String> getFollowedFriends(String username) throws SQLException {
         List<String> result = new ArrayList<>();
-        resultSet = statement.executeQuery("select * from followers WHERE follower='"+user+"'");
+        resultSet = statement.executeQuery("select * from followers WHERE follower='"+username+"'");
         while (resultSet.next()){
             result.add(resultSet.getString(1));
         }
         return result;
     }
+    public String getFollowedConcatenated(String username) throws SQLException {
+        return getListAsString(getFollowedFriends(username));
+    }
+
     public void tweetSomething(String user, String tweet) throws SQLException, ParseException {
         statement.execute("INSERT INTO tweet VALUES ('" + user + "','" + tweet + "',NOW())");
     }
@@ -141,6 +147,13 @@ public class Database {
         while(resultSet.next())tweets.add(resultSet.getString(1)+"\t\t"+resultSet.getString(2)+"\t\t"+resultSet.getString(3));
         return tweets;
     }
+    public String getFollowedTweetsConcatenated(String user, String filterUser, String startDate, String endDate, Integer count) throws SQLException {
+        StringBuilder result  = new StringBuilder();
+        List<String> tweets = getFollowedTweets(user,filterUser, startDate,endDate,count);
+        for(String tweet:tweets)result.append(tweet+"\n");
+        return result.toString();
+    }
+
 
 
 

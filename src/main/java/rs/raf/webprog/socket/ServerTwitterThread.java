@@ -63,25 +63,25 @@ public class ServerTwitterThread extends Thread {
                         outToClient.writeObject(unFollowUser(commandParts[1], commandParts[2]));
                         break;
                     }
+                    case Constants.GET_FOLLOWED_COMMAND:{
+                        outToClient.writeObject(getFollowed(commandParts[1]));
+                        break;
+                    }
                     case Constants.TWEET_COMMAND:{
                         outToClient.writeObject(tweet(commandParts[1], commandParts[2]));
                         break;
                     }
                     case Constants.GET_FOLLOWED_TWEETS_COMMAND:{
-                        outToClient.writeObject(tweet(commandParts[1], commandParts[2]));
+                        String user = commandParts[1];
+                        String filterUser = commandParts[2].equals("*")?null:commandParts[2];
+                        String startDate = commandParts[3].equals("*")?null:commandParts[3];
+                        String endDate = commandParts[4].equals("*")?null:commandParts[4];
+                        Integer count = Integer.parseInt(commandParts[5]);
+                        outToClient.writeObject(getFollowedTweets(user, filterUser, startDate, endDate, count));
                         break;
                     }
 
                 }
-//                if (commandParts[0].equals(Constants.USER_EXISTS_COMMAND)){
-//
-//                    return userExistInDB(commandParts[1]);
-//                }
-//                outputLine = parseAndExecuteCommand(inputLine)?"OK":"NO";
-//                System.out.println("server returning:"+outputLine);
-//                out.println(outputLine);
-//                if (inputLine.equals("Bye"))
-//                    break;
             }
             socket.close();
         } catch (IOException e) {
@@ -123,9 +123,15 @@ public class ServerTwitterThread extends Thread {
     public boolean unFollowUser(String follower, String followed) throws SQLException {
         return database.unFollowUser(follower, followed);
     }
+    public String getFollowed(String username) throws SQLException {
+        return database.getFollowedConcatenated(username);
+    }
 
     public boolean tweet(String username, String tweet) throws SQLException, ParseException {
         database.tweetSomething(username, tweet);
         return true;
+    }
+    public String getFollowedTweets(String user, String filterUser, String startDate, String endDate, Integer count) throws SQLException {
+        return database.getFollowedTweetsConcatenated(user, filterUser,startDate, endDate, count);
     }
 }

@@ -73,6 +73,11 @@ public class ClientTwitter {
         outToServer.println(command);
         return (Boolean)inFromServer.readObject();
     }
+    public String getFollowedUsers(String username) throws IOException, ClassNotFoundException {
+        String command = Constants.GET_FOLLOWED_COMMAND+Constants.SEP+username;
+        outToServer.println(command);
+        return (String)inFromServer.readObject();
+    }
     public boolean unFollowUser(String follower,String followed) throws IOException, ClassNotFoundException {
         String command = Constants.UNFOLLOW_USER_COMMAND+Constants.SEP+follower+Constants.SEP+followed;
         outToServer.println(command);
@@ -83,8 +88,8 @@ public class ClientTwitter {
         outToServer.println(command);
         return (Boolean)inFromServer.readObject();
     }
-    public String getFollowedTweets(String username) throws IOException, ClassNotFoundException {
-        String command = Constants.GET_FOLLOWED_TWEETS_COMMAND+Constants.SEP+username;
+    public String getFollowedTweets(String user, String filterUser, String startDate, String endDate, Integer count) throws IOException, ClassNotFoundException {
+        String command = Constants.GET_FOLLOWED_TWEETS_COMMAND+Constants.SEP+user+Constants.SEP+filterUser+Constants.SEP+startDate+Constants.SEP+endDate+Constants.SEP+count;
         outToServer.println(command);
         return (String)inFromServer.readObject();
     }

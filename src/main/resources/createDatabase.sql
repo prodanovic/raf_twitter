@@ -1,6 +1,11 @@
 CREATE DATABASE IF NOT EXISTS  twitter;
 USE twitter;
 
+DROP TABLE  `user`;
+DROP TABLE  `tweet`;
+DROP TABLE  `followers`;
+
+
 CREATE TABLE IF NOT EXISTS  `user` (
   `username` VARCHAR(100) NOT NULL,
   `password` VARCHAR(100) NOT NULL,

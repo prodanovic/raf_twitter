@@ -14,6 +14,7 @@ public class Constants {
     public static final String GET_USER_COMMAND = "GETUSER";
     public static final String FOLLOW_USER_COMMAND = "FOLLOWUSER";
     public static final String UNFOLLOW_USER_COMMAND = "UNFOLLOWUSER";
+    public static final String GET_FOLLOWED_COMMAND = "GETFOLLOWED";
     public static final String TWEET_COMMAND = "TWEET";
     public static final String GET_FOLLOWED_TWEETS_COMMAND = "GETFOLLOWEDTWEETS";
 

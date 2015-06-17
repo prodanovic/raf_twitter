@@ -87,15 +87,16 @@ public class ClientConsole {
                                 System.out.print("Which user would you like to follow? ");
                                 String followUser = console.readLine();
                                 if(clientTwitter.followUser(username,followUser))
-                                    System.out.println("You are now following "+ followUser);
+                                    System.out.println("You are now following "+ clientTwitter.getFollowedUsers(username)+".");
                                 else System.out.println("User "+ followUser+" doesn't exist.");
                                 break;
                             }
                             case 4:{
+                                System.out.println("You are following users: " + clientTwitter.getFollowedUsers(username) );
                                 System.out.print("Which user would you like to un-follow? ");
                                 String followUser = console.readLine();
                                 if(clientTwitter.unFollowUser(username,followUser))
-                                    System.out.println("You are no longer following "+ followUser);
+                                    System.out.println("You are no longer following "+ followUser+".");
                                 else System.out.println("User "+ followUser+" doesn't exist.");
                                 break;
                             }
@@ -106,9 +107,22 @@ public class ClientConsole {
                                 break;
                             }
                             case 6:{
-                                System.out.println("Gukni nesto golube. ");
-                                String tweet = console.readLine();
-                                clientTwitter.tweet(username,tweet);
+                                System.out.println("You follow: "+clientTwitter.getFollowedUsers(username));
+                                System.out.println("Which friends's tweets would you like to see?(leave blank for all)");
+                                String filterUser = console.readLine();
+                                if(filterUser.isEmpty())filterUser="*";
+                                System.out.println("From how long back, in format yyyy-MM-dd HH:mm:ss?(leave blank for all)");
+                                String startDate = console.readLine();
+                                if(startDate.isEmpty())startDate="*";
+                                System.out.println("How many tweets?(0 for all)");
+                                Integer count = Integer.parseInt(console.readLine());
+                                String tweetString= clientTwitter.getFollowedTweets(username, filterUser, startDate, "*", count);
+                                if(tweetString.isEmpty())
+                                    System.err.println("Sorry, no tweets. ");
+                                else {
+                                    System.err.println("User\tTweet\tWhen");
+                                    System.out.print(tweetString);
+                                }
                                 break;
                             }
                             case 7:{
@@ -117,7 +131,17 @@ public class ClientConsole {
                                 break;
                             }
                         }
-                        System.out.println("------------------");
+                        System.out.println();
+                        try {
+                            int i=0;
+                            while(i++<15){
+                                Thread.sleep(200);
+                                System.out.print("-");
+                            }
+                            System.out.println();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     break;
