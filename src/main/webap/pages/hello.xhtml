@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://java.sun.com/jsf/core http://java.sun.com/jsf/html ">
+
+<h:head>
+    <title>Raf Twitter</title>
+    <link rel="stylesheet" type="text/css" href="../css/one.css"/>
+</h:head>
+<h:body>
+    <img id="logo" src="../images/logo.jpg" alt=""></img>
+
+    <h2 id="welcomeNote">Share your thoughts and dreams with the whole world </h2>
+
+    <h:form id="loginForm">
+        <h:inputText value="#{loginBean.username}"></h:inputText>
+        <h:inputSecret  value="#{loginBean.password}"></h:inputSecret>
+        <h:commandButton value="Login" action="welcome"></h:commandButton>
+    </h:form>
+
+    <h:form id="registerForm">
+        <h:inputText value="#{registerBean.username}"></h:inputText>
+        <h:inputSecret  value="#{registerBean.password}"></h:inputSecret>
+        <h:commandButton value="Register" action="welcome"></h:commandButton>
+    </h:form>
+</h:body>
+</html>
